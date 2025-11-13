@@ -1,0 +1,117 @@
+services:
+  # MongoDB Database
+  mongodb:
+    image: mongo:7
+    container_name: petbuddy-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USERNAME:-admin}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD:-password123}
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - petbuddy-network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Backend Service
+  backend:
+    build:
+      context: ..
+      dockerfile: packages/backend/Dockerfile
+    container_name: petbuddy-backend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=${NODE_ENV:-development}
+      - PORT=3000
+      - MONGODB_URI=${MONGODB_URI:-mongodb://admin:password123@mongodb:27017/petbuddy?authSource=admin}
+      - JWT_ACCESS_SECRET=${JWT_ACCESS_SECRET}
+      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET}
+      - INTERNAL_SERVICE_API_KEY=${INTERNAL_SERVICE_API_KEY}
+      - FRONTEND_URL=${FRONTEND_URL:-http://localhost:5173}
+      - CORS_ORIGINS=${CORS_ORIGINS:-http://localhost:5173,http://localhost:3000}
+      - META_BOT_BASE_URL=${META_BOT_URL:-http://meta-bot:5001}
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - petbuddy-network
+    volumes:
+      - ../packages/backend/src:/app/packages/backend/src
+      - ../packages/backend/server.js:/app/packages/backend/server.js
+      - ../packages/shared/src:/app/packages/shared/src
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "require('http').get('http://localhost:3000/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)}).on('error', () => process.exit(1))",
+        ]
+      interval: 30s
+      timeout: 10s
+      start_period: 60s
+      retries: 5
+
+  # Meta/AI Bot Service
+  meta-bot:
+    build:
+      context: ..
+      dockerfile: packages/meta-bot/Dockerfile
+    container_name: petbuddy-meta-bot
+    restart: unless-stopped
+    ports:
+      - "5001:5001"
+    environment:
+      - NODE_ENV=${NODE_ENV:-development}
+      - META_BOT_PORT=5001
+      # Use Atlas MongoDB instead of local Docker MongoDB
+      # - MONGODB_URI_DOCKER=mongodb://admin:password123@mongodb:27017/petbuddy?authSource=admin
+      - MONGODB_URI=${MONGODB_URI}
+      - VERIFY_TOKEN=${VERIFY_TOKEN:-rame}
+      - FB_PAGE_ACCESS_TOKEN=${PAGE_ACCESS_TOKEN}
+      - APP_SECRET=${APP_SECRET}
+      - BACKEND_API_URL=${BACKEND_API_URL:-http://backend:3000}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - JWT_ACCESS_SECRET=${JWT_ACCESS_SECRET}
+      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET}
+      - INTERNAL_SERVICE_API_KEY=${INTERNAL_SERVICE_API_KEY}
+      - FRONTEND_URL=${FRONTEND_URL:-http://localhost:5173}
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
+    networks:
+      - petbuddy-network
+    volumes:
+      - ../packages/meta-bot:/app/packages/meta-bot
+      - ../packages/shared/src:/app/packages/shared/src
+      - /app/packages/meta-bot/node_modules
+      - /app/packages/shared/node_modules
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "require('http').get('http://localhost:5001/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  petbuddy-network:
+    driver: bridge
+
+volumes:
+  mongodb_data:
+    driver: local

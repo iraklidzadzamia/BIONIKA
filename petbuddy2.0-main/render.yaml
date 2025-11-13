@@ -1,0 +1,70 @@
+services:
+  # Backend API Service
+  - type: web
+    name: petbuddy-backend
+    runtime: docker
+    dockerfilePath: ./packages/backend/Dockerfile
+    dockerContext: .
+    region: oregon
+    plan: free
+    branch: main
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: MONGODB_URI
+        sync: false  # You'll add this manually in Render dashboard
+      - key: JWT_ACCESS_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+      - key: INTERNAL_SERVICE_API_KEY
+        generateValue: true
+      - key: FRONTEND_URL
+        value: https://your-frontend-url.onrender.com
+      - key: META_BOT_URL
+        fromService:
+          type: web
+          name: petbuddy-meta-bot
+          property: host
+
+  # Meta Bot Service
+  - type: web
+    name: petbuddy-meta-bot
+    runtime: docker
+    dockerfilePath: ./packages/meta-bot/Dockerfile
+    dockerContext: .
+    region: oregon
+    plan: free
+    branch: main
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: META_BOT_PORT
+        value: 5001
+      - key: MONGODB_URI
+        sync: false  # You'll add this manually in Render dashboard
+      - key: BACKEND_API_URL
+        fromService:
+          type: web
+          name: petbuddy-backend
+          property: host
+      - key: VERIFY_TOKEN
+        sync: false  # Add manually - your chosen verify token
+      - key: PAGE_ACCESS_TOKEN
+        sync: false  # Add manually - from Facebook
+      - key: APP_SECRET
+        sync: false  # Add manually - from Facebook
+      - key: OPENAI_API_KEY
+        sync: false  # Add manually - from OpenAI
+      - key: JWT_ACCESS_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+      - key: INTERNAL_SERVICE_API_KEY
+        generateValue: true
+      - key: FRONTEND_URL
+        value: https://your-frontend-url.onrender.com

@@ -1,0 +1,22 @@
+# COPY-PASTE THESE COMMANDS TO TEST LOCALLY
+
+# Step 1: Install dependencies (first time only, takes 2-3 min)
+npm install
+
+# Step 2: Start backend (with local MongoDB)
+npm run dev:backend
+
+# Step 3: In NEW terminal, test it works
+curl http://localhost:3000/health
+
+# Expected: {"status":"healthy"}
+
+# Optional: Seed database with sample data
+npm run seed
+
+# Optional: Start all services (backend + meta-bot + frontend)
+npm run dev
+
+# Optional: Use Docker instead
+npm run docker:up
+

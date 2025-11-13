@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"],
+      "@/features/*": ["./features/*"],
+      "@/shared/*": ["./shared/*"],
+      "@/core/*": ["./core/*"],
+      "@/config/*": ["./config/*"],
+      "@/assets/*": ["./assets/*"],
+      "@/styles/*": ["./styles/*"],
+      "@/ui": ["./shared/components/ui"],
+      "@/hooks": ["./shared/hooks"],
+      "@/utils": ["./shared/utils"],
+      "@/modals": ["./shared/components/modals"],
+      "@/guards": ["./shared/components/guards"]
+    }
+  }
+}

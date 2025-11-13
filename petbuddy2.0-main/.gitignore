@@ -1,0 +1,72 @@
+# Dependencies
+node_modules/
+*/node_modules/
+**/node_modules/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+*.env
+!.env.example
+docker/.env
+!docker/.env.example
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Build outputs
+dist/
+build/
+.next/
+out/
+*.tsbuildinfo
+
+# Testing
+coverage/
+.nyc_output/
+*.test.js.snap
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+.cursor/
+.claude/
+
+# OS
+Thumbs.db
+desktop.ini
+
+# Package manager
+# package-lock.json - NEEDED for Docker npm ci
+yarn.lock
+pnpm-lock.yaml
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# Docker
+*.dockerignore.bak
+
+# Production secrets
+*.pem
+*.key
+*.cert
+
+# Database
+*.sqlite
+*.db
+
+# Misc
+.cursorrules

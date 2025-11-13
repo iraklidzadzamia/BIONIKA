@@ -1,0 +1,55 @@
+{
+  "name": "petbuddy2.0",
+  "version": "1.0.0",
+  "description": "PetBuddy 2.0 - Complete pet grooming salon management system with Meta bot integration",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "setup": "chmod +x scripts/setup.sh && ./scripts/setup.sh",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:meta-bot\" \"npm run dev:frontend\"",
+    "dev:backend": "cd packages/backend && npm run dev",
+    "dev:meta-bot": "cd packages/meta-bot && npm run dev",
+    "dev:frontend": "cd packages/frontend && npm run dev",
+    "start": "concurrently \"npm run start:backend\" \"npm run start:meta-bot\"",
+    "start:backend": "cd packages/backend && npm start",
+    "start:meta-bot": "cd packages/meta-bot && npm start",
+    "install:all": "npm install",
+    "build": "npm run build:frontend",
+    "build:frontend": "cd packages/frontend && npm run build",
+    "test": "cd packages/backend && npm test",
+    "seed": "cd packages/backend && npm run seed",
+    "docker:up": "cd docker && docker-compose up -d",
+    "docker:down": "cd docker && docker-compose down",
+    "docker:logs": "cd docker && docker-compose logs -f",
+    "docker:logs:backend": "cd docker && docker-compose logs -f backend",
+    "docker:logs:meta-bot": "cd docker && docker-compose logs -f meta-bot",
+    "docker:logs:mongodb": "cd docker && docker-compose logs -f mongodb",
+    "docker:build": "cd docker && docker-compose build",
+    "docker:restart": "cd docker && docker-compose restart",
+    "docker:restart:backend": "cd docker && docker-compose restart backend",
+    "docker:restart:meta-bot": "cd docker && docker-compose restart meta-bot",
+    "docker:reload": "npm run docker:down && npm run docker:up",
+    "docker:ps": "cd docker && docker-compose ps"
+  },
+  "keywords": [
+    "pet-grooming",
+    "salon-management",
+    "booking-system",
+    "meta-bot",
+    "ai-customer-service",
+    "facebook-bot",
+    "instagram-bot",
+    "monorepo"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

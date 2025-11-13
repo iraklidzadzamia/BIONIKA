@@ -1,0 +1,29 @@
+{
+  "name": "@petbuddy/shared",
+  "version": "1.0.0",
+  "description": "Shared models, types, and utilities for PetBuddy services",
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./models": "./src/models/index.js",
+    "./utils": "./src/utils/index.js",
+    "./types": "./src/types/index.js",
+    "./constants": "./src/constants/index.js"
+  },
+  "keywords": [
+    "petbuddy",
+    "shared",
+    "models",
+    "utilities"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "mongoose": "^8.0.3",
+    "moment-timezone": "^0.6.0"
+  },
+  "peerDependencies": {
+    "mongoose": "^8.0.0"
+  }
+}
